@@ -1,6 +1,8 @@
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
 
+#include "FS.h"
+
 #include <Wire.h>;
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
@@ -22,6 +24,8 @@ String weatherString;
 
 Adafruit_SSD1306 display(OLED_RESET);
 
+String path = "data.txt";
+ 
 void setup()
 {
   Serial.begin(115200);
@@ -34,7 +38,18 @@ void setup()
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.display();
-  
+
+  SPIFFS.begin();
+  if (SPIFFS.exists(path)) {
+    Serial.println("read " + path + " file");
+    File file = SPIFFS.open(path, "r");
+    if(!file){
+      Serial.println("Failed to open file for reading");
+      return;
+    }
+    Serial.println(file.read());
+    file.close();
+  }
   Serial.printf("Connecting to %s ", ssid);
 
   display.setCursor(0,0);
