@@ -33,7 +33,7 @@ const long interval1 = 10000;
 #include <sys/time.h>                   // struct timeval
 #include <coredecls.h>                  // settimeofday_cb()
 
-#define TZ              1       // (utc+) TZ in hours
+#define TZ              0       // (utc+) TZ in hours
 #define DST_MN          0      // use 60mn for summer time in some countries
 
 #define RTC_TEST     1510592825 // 1510592825 = Monday 13 November 2017 17:07:05 UTC
