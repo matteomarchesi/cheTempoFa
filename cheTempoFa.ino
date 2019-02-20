@@ -5,8 +5,6 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
-#define CET (1)
-
 const char* host      = "api.openweathermap.org";
 
 const char* ssid      = "Vodafone-50556336";
@@ -29,45 +27,26 @@ const long interval = 60000;
 unsigned long previousMillis1 = 0;
 const long interval1 = 10000;
 
-#include <time.h>                       // time() ctime()
-#include <sys/time.h>                   // struct timeval
-#include <coredecls.h>                  // settimeofday_cb()
+#include <time.h>                       
 
-#define TZ              0       // (utc+) TZ in hours
-#define DST_MN          0      // use 60mn for summer time in some countries
+const char* ntpServer = "pool.ntp.org";
+const long  gmtOffset_sec = 3600;
+const int   daylightOffset_sec = 0;
 
-#define RTC_TEST     1510592825 // 1510592825 = Monday 13 November 2017 17:07:05 UTC
+char buffer[80];
 
-#define TZ_MN           ((TZ)*60)
-#define TZ_SEC          ((TZ)*3600)
-#define DST_SEC         ((DST_MN)*60)
+time_t rawtime;
+struct tm * timeinfo;
 
-timeval cbtime;      // time set in callback
-bool cbtime_set = false;
-
-void time_is_set(void) {
-  gettimeofday(&cbtime, NULL);
-  cbtime_set = true;
-  Serial.println("------------------ settimeofday() was called ------------------");
-}
-
-timeval tv;
-timespec tp;
-time_t now;
-
-bool updateDateTime = true;
-bool updateWeather = true;
-int minu, seco;
+int ora, sec;
+int ora_pre = -1;
+int sec_pre = -1;
 
 void setup()
 {
 // set Serial connection for debug
   Serial.begin(115200);
   Serial.println();
-
-// clock initialization
-  settimeofday_cb(time_is_set);
-  configTime(TZ_SEC, DST_SEC, "pool.ntp.org");
 
 //I2C initialization for oled display
   Wire.pins(0, 2);
@@ -90,39 +69,50 @@ void setup()
   {
     delay(500);
     Serial.print(".");
-//    display.setCursor(0,8);
     display.print(".");
     display.display();
   }
   Serial.println(" connected");
   display.println("\nconnected");
   display.display();
+
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+
+  Serial.println("\nWaiting for time");
+  unsigned timeout = 5000;
+  unsigned start = millis();
+  while (!time(nullptr)) 
+  {
+    Serial.print(".");
+    delay(1000);
+  }
+  delay(1000);
+  
+  Serial.println("Time...");
+  printTime();
 }
-
-
-
 
 
 void loop()
 {
-  unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= interval) {
-    previousMillis = currentMillis;
-    updateDateTime = true;
-  }
+  sec = timeinfo->tm_sec;
+  ora = timeinfo->tm_hour;
   
-  if (currentMillis - previousMillis >= interval*60) {
-    previousMillis = currentMillis;
-    updateWeather = true;
-  }
+  time (&rawtime);
+  timeinfo = localtime (&rawtime);
 
-  if (updateDateTime) {
-    getDateTime();
-    updateDateTime = false;
+/*  
+  Serial.println(sec);
+  Serial.println(sec_pre);
+  Serial.println(ora);
+  Serial.println(ora_pre);
+*/
+  if (sec!=sec_pre){
+    printTime();
+    sec_pre = sec;
   }
-
-  if (updateWeather) {
+  if (ora!=ora_pre){
     getWeatherAndPrint();
-    updateWeather = false;
+    ora_pre = ora;
   }
 }
