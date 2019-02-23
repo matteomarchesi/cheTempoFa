@@ -73,7 +73,16 @@ void getWeatherAndPrint()
         const char* name = root["name"]; // "Bernareggio"
         int cod = root["cod"]; // 200
 
-
+        current.de = weather_0_description;
+        current.ic = weather_0_icon;
+        current.te = main_temp;
+        current.mi = main_temp_min;
+        current.mx = main_temp_max;
+        current.hu = main_humidity;
+        current.pr = main_pressure;
+        current.ws = wind_speed;
+        current.wd = wind_deg;
+        current.vi = visibility;
 
         Serial.println("-----------------------");
 
@@ -98,6 +107,7 @@ void getWeatherAndPrint()
 
 
         Serial.println("-----------------------");
+        /*
        // display.clearDisplay();
     for (int y=0; y<=23; y++)
         {
@@ -117,6 +127,7 @@ void getWeatherAndPrint()
         display.printf("%5.1fkm/h  %5.1f*C", wind_speed, main_temp);
 
         display.display();      
+        */
       }
     }
     client.stop();
@@ -126,9 +137,11 @@ void getWeatherAndPrint()
   else
   {
     Serial.println("connection failed!]");
+/*
     display.clearDisplay();
     display.print("connection failed!");
     display.display(); 
+*/
     client.stop();
   }
   

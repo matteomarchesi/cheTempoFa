@@ -10,6 +10,43 @@ void printTime()
   sec = timeinfo->tm_sec;
   ora = timeinfo->tm_hour;
 }
+
+bool checkDST()
+{
+  WiFiClient clientTime;
+  bool isDayLightSavingsTime = false;
+  
+  String timeHost = "worldclockapi.com";
+  if (clientTime.connect(timeHost, 80))
+  {
+    clientTime.print(String("GET /api/json/cet/now") +
+                "\r\n"+
+                 "Host: " + timeHost + "\r\n" +
+                 "Connection: close\r\n" +
+                 "\r\n"
+    );
+    while (clientTime.connected() || clientTime.available())
+    {
+      if (clientTime.available())
+      {
+        String line = clientTime.readStringUntil('\n');
+// Json
+        
+        DynamicJsonBuffer jsonBuf;
+        JsonObject& root = jsonBuf.parseObject(line);
+        
+        if (!root.success())
+        {
+          return isDayLightSavingsTime;
+        }
+
+        isDayLightSavingsTime = root["isDayLightSavingsTime"]; // false
+      }
+    }
+  }
+  return isDayLightSavingsTime;
+ }
+  
 /*
    int tm_sec;         /* seconds,  range 0 to 59          
    int tm_min;         /* minutes, range 0 to 59           

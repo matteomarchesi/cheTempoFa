@@ -1,3 +1,48 @@
+/*
+ * cheTempoFa.ino
+ * - dateTimeFunct.ino
+ * - displayFunct.ino
+ * - weatherFunct.ino
+ * 
+ * weather gadget.
+ * HW:
+ * - ESP-01
+ * - SSD1306 0.96" dispaly 128x32  --> to be upgraded
+ * - 3.3K pullup resistors
+ * - 330R pass resistor
+ * - pushbuttons
+ *   - reset (hidden)
+ *   - function (TBD)
+ * - program switch (hidded)
+ * - USB adapter for program/debuggin
+ * 
+ * SW:
+ * Get date and time from NTP server
+ * Get timezone and DST from (TBD)
+ *   - http://worldclockapi.com/api/json/cet/now
+ * Get weather from openweathermap.org
+ * - current
+ * - 3h forecast (TBD)
+ * - next day(s) forecast (TBD)
+ * - OTA (TBD)
+ * - SPIFF (TBD) to manage config parameters (TBD)
+ *   - ssid
+ *   - password
+ *   - apikey
+ *   - location
+ *   
+ *   
+ *  char size 6x8
+ *  rows start at 0, 8, 16, 24  
+ *  +---------------------+
+ *  |cielo sereno         |
+ *  | 1034hPa 100%RH      |
+ *  |  4.1km/h    8.0dC   |
+ *  |Sat 27-02-29 16:05:38|
+ *  +---------------------+
+ *   012345678901234567890
+ */
+
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
 
@@ -21,12 +66,6 @@ String weatherString;
 
 Adafruit_SSD1306 display(OLED_RESET);
 
-unsigned long previousMillis = 0;
-const long interval = 60000;
-
-unsigned long previousMillis1 = 0;
-const long interval1 = 10000;
-
 #include <time.h>                       
 
 const char* ntpServer = "pool.ntp.org";
@@ -38,15 +77,48 @@ char buffer[80];
 time_t rawtime;
 struct tm * timeinfo;
 
+typedef struct {
+  String de; // description
+  String ic; // icon
+  float  te; // temperature
+  int    mi; // minimum temp.
+  int    mx; // maximum temp.
+  int    hu; // humidity
+  int    pr; // pressure
+  float  ws; // wind speed
+  int    wd; // wind direction
+  int    vi; // visibility 
+} weather_data;
+
+weather_data current;
+weather_data next3;
+weather_data next6;
+weather_data next9;
+weather_data dp1;
+weather_data dp2;
+weather_data dp3;
+
+
+
 int ora, sec;
 int ora_pre = -1;
 int sec_pre = -1;
 
+void getWeatherAndPrint();
+void clearLine(int lineN);
+void clearChar(int lineN, int colN);
+void printTime();
+bool checkDST();
+
+
+
 void setup()
 {
 // set Serial connection for debug
-  Serial.begin(115200);
+  Serial.begin(115200,SERIAL_8N1,SERIAL_TX_ONLY);
   Serial.println();
+
+  pinMode(3,INPUT_PULLUP);
 
 //I2C initialization for oled display
   Wire.pins(0, 2);
@@ -101,18 +173,22 @@ void loop()
   time (&rawtime);
   timeinfo = localtime (&rawtime);
 
-/*  
-  Serial.println(sec);
-  Serial.println(sec_pre);
-  Serial.println(ora);
-  Serial.println(ora_pre);
-*/
+  int reading = digitalRead(3);
+  if (reading==0){
+    display.clearDisplay();
+    display.setCursor(0,0);
+    display.println("cheTempoFa");
+    display.display();
+    delay(2000);
+  }
+  
   if (sec!=sec_pre){
     printTime();
     sec_pre = sec;
   }
   if (ora!=ora_pre){
     getWeatherAndPrint();
+    printWeather(current);
     ora_pre = ora;
   }
 }
