@@ -38,7 +38,7 @@
  *  |cielo sereno         |
  *  | 1034hPa 100%RH      |
  *  |  4.1km/h    8.0dC   |
- *  |Sat 27-02-29 16:05:38|
+ *  |Sat 27-02-19 16:05:38|
  *  +---------------------+
  *   012345678901234567890
  */
@@ -88,17 +88,16 @@ typedef struct {
   float  ws; // wind speed
   int    wd; // wind direction
   int    vi; // visibility 
+  String ti: // time
 } weather_data;
 
 weather_data current;
 weather_data next3;
 weather_data next6;
-weather_data next9;
+weather_data next12;
 weather_data dp1;
 weather_data dp2;
 weather_data dp3;
-
-
 
 int ora, sec;
 int ora_pre = -1;
@@ -110,7 +109,10 @@ void clearChar(int lineN, int colN);
 void printTime();
 bool checkDST();
 
+unsigned long previousMillis = 0;
+unsigned long interval = 5000;
 
+int displayWhat = 0;
 
 void setup()
 {
@@ -172,23 +174,55 @@ void loop()
   
   time (&rawtime);
   timeinfo = localtime (&rawtime);
-
+  
+  unsigned long currentMillis = millis();
+  
+// ready keypressed
   int reading = digitalRead(3);
   if (reading==0){
-    display.clearDisplay();
-    display.setCursor(0,0);
-    display.println("cheTempoFa");
-    display.display();
-    delay(2000);
+      previousMillis = currentMillis;
+      displayWhat++;
+      if (displayWhat>6){
+          displayWhat=0;
+        }
+    }
+// 5" after last keypressed reset display
+  if (currentMillis-previousMillis > interval){
+    displayWhat=0;
   }
-  
+     
   if (sec!=sec_pre){
-    printTime();
+    switch (displayWhat)
+    {
+      case 0: // now
+        printWeather(current);
+        printTime();
+        break;
+      case 1: // +3h
+        printWeather(next3);
+        break;
+      case 2: // +6h
+        printWeather(next6);
+        break;
+      case 3: // +12h
+        printWeather(next12);
+        break;
+      case 4: // +1d
+        printWeather(dp1);
+        break;
+      case 5: // +2d
+        printWeather(dp2);
+        break;
+      case 6: // +3d
+        printWeather(dp3);
+        break;
+    }
     sec_pre = sec;
   }
   if (ora!=ora_pre){
     getWeatherAndPrint();
-    printWeather(current);
+    getWeatherHourly();
+    getWeatherDaily();
     ora_pre = ora;
   }
 }
