@@ -10,7 +10,7 @@ void printTime()
   sec = timeinfo->tm_sec;
   ora = timeinfo->tm_hour;
 }
-
+/*
 bool checkDST()
 {
   WiFiClient clientTime;

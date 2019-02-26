@@ -32,3 +32,5 @@ Get weather from openweathermap.org
   - password
   - apikey
   - location
+
+REQUIRES ArduinoJSON 6

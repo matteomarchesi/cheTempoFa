@@ -36,14 +36,32 @@ void clearChar(int lineN, int colN){
 void printWeather(weather_data data){
   display.clearDisplay();
   display.setCursor(0,0);
-  display.print("%-12s %8s\n", data.de, data.ti);
+  display.print(data.de);
+  display.setCursor(100,0);
+  display.print(data.ti);
   display.setCursor(0,8);
   display.printf("%4dhPa %3d%%RH", data.pr, data.hu);
   display.setCursor(0,16);
   display.printf("%4.1fdC %5.1fkm/h", data.te, data.ws);
-//  display.printf("%5.1fkm/h  %4.1fdC", data.ws, data.te);
   display.setCursor(0,24);
   display.printf("%4d/%4ddC", data.mi, data.mx);
+  display.display();      
+ 
+}
+
+void printWeatherC(weather_data data){
+//  display.clearDisplay();
+  clearLine(0);
+  clearLine(1);
+  clearLine(2);
+  display.setCursor(0,0);
+  display.print(data.de);
+  display.setCursor(0,8);
+  display.printf("%4dhPa %3d%%RH", data.pr, data.hu);
+  display.setCursor(0,16);
+  display.printf("%4.1fdC %5.1fkm/h", data.te, data.ws);
+//  display.setCursor(0,24);
+//  display.printf("%4d/%4ddC", data.mi, data.mx);
   display.display();      
  
 }

@@ -12,7 +12,7 @@
  * - 330R pass resistor
  * - pushbuttons
  *   - reset (hidden)
- *   - function (TBD)
+ *   - function 
  * - program switch (hidded)
  * - USB adapter for program/debuggin
  * 
@@ -22,8 +22,8 @@
  *   - http://worldclockapi.com/api/json/cet/now
  * Get weather from openweathermap.org
  * - current
- * - 3h forecast (TBD)
- * - next day(s) forecast (TBD)
+ * - 3h forecast 
+ * - next day(s) forecast 
  * - OTA (TBD)
  * - SPIFF (TBD) to manage config parameters (TBD)
  *   - ssid
@@ -88,7 +88,7 @@ typedef struct {
   float  ws; // wind speed
   int    wd; // wind direction
   int    vi; // visibility 
-  String ti: // time
+  String ti; // time
 } weather_data;
 
 weather_data current;
@@ -103,7 +103,8 @@ int ora, sec;
 int ora_pre = -1;
 int sec_pre = -1;
 
-void getWeatherAndPrint();
+void getWeather();
+void getWeatherHourly();
 void clearLine(int lineN);
 void clearChar(int lineN, int colN);
 void printTime();
@@ -195,7 +196,7 @@ void loop()
     switch (displayWhat)
     {
       case 0: // now
-        printWeather(current);
+        printWeatherC(current);
         printTime();
         break;
       case 1: // +3h
@@ -220,7 +221,7 @@ void loop()
     sec_pre = sec;
   }
   if (ora!=ora_pre){
-    getWeatherAndPrint();
+    getWeather();
     getWeatherHourly();
     getWeatherDaily();
     ora_pre = ora;
