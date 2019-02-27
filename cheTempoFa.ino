@@ -115,6 +115,12 @@ unsigned long interval = 5000;
 
 int displayWhat = 0;
 
+// debounce
+int buttonState;             // the current reading from the input pin
+int lastButtonState = LOW;   // the previous reading from the input pin
+unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
+unsigned long debounceDelay = 50;    // the debounce time; increase if the output flickers
+
 void setup()
 {
 // set Serial connection for debug
@@ -180,13 +186,41 @@ void loop()
   
 // ready keypressed
   int reading = digitalRead(3);
+
+// Debounce start  
+  if (reading != lastButtonState) {
+    // reset the debouncing timer
+    lastDebounceTime = millis();
+  }
+
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    if (reading != buttonState) {
+      buttonState = reading;
+
+      if (buttonState == Low) {
+        previousMillis = currentMillis;
+        displayWhat++;
+        if (displayWhat>6){
+            displayWhat=0;
+        }
+
+
+      }
+    }
+  }
+
+  lastButtonState = reading;
+  
+// Debounce end
+  
+/*  
   if (reading==0){
       previousMillis = currentMillis;
       displayWhat++;
       if (displayWhat>6){
           displayWhat=0;
         }
-    }
+    }*/
 // 5" after last keypressed reset display
   if (currentMillis-previousMillis > interval){
     displayWhat=0;
