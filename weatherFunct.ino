@@ -66,52 +66,6 @@ void getWeather()
 
 
         
-/*
-        DynamicJsonBuffer jsonBuf;
-        JsonObject& root = jsonBuf.parseObject(line);
-        if (!root.success())
-        {
-          return;
-        }
-
-        float coord_lon = root["coord"]["lon"]; // 9.41/        float coord_lat = root["coord"]["lat"]; // 45.65
-        
-        JsonObject& weather_0 = root["weather"][0];
-        int weather_0_id = weather_0["id"]; // 800
-        const char* weather_0_main = weather_0["main"]; // "Clear"
-        const char* weather_0_description = weather_0["description"]; // "cielo sereno"
-        const char* weather_0_icon = weather_0["icon"]; // "01n"
-        
-        const char* base = root["base"]; // "stations"
-        
-        JsonObject& main = root["main"];
-        float main_temp = main["temp"]; // 1.22
-        int main_pressure = main["pressure"]; // 1025
-        int main_humidity = main["humidity"]; // 80
-        int main_temp_min = main["temp_min"]; // 0
-        int main_temp_max = main["temp_max"]; // 3
-        
-        int visibility = root["visibility"]; // 10000
-        
-        float wind_speed = root["wind"]["speed"]; // 2.1
-        int wind_deg = root["wind"]["deg"]; // 360
-        
-        int clouds_all = root["clouds"]["all"]; // 0
-        
-        long dt = root["dt"]; // 1549398000
-        
-        JsonObject& sys = root["sys"];
-        int sys_type = sys["type"]; // 1
-        int sys_id = sys["id"]; // 6735
-        float sys_message = sys["message"]; // 0.0035
-        const char* sys_country = sys["country"]; // "IT"
-        long sys_sunrise = sys["sunrise"]; // 1549348693
-        long sys_sunset = sys["sunset"]; // 1549384511
-        
-        long id = root["id"]; // 6534286
-        const char* name = root["name"]; // "Bernareggio"
-        int cod = root["cod"]; // 200
-*/
         current.de = weather_0_description;
         current.ic = weather_0_icon;
         current.te = main_temp;
@@ -160,200 +114,61 @@ void getWeatherHourly()
       {
         String line = client.readStringUntil('\n');
 // Json
-const size_t capacity = 4*JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + 8*JSON_OBJECT_SIZE(1) + 5*JSON_OBJECT_SIZE(2) + 4*JSON_OBJECT_SIZE(4) + 2*JSON_OBJECT_SIZE(5) + 4*JSON_OBJECT_SIZE(7) + 4*JSON_OBJECT_SIZE(8) + 980;
-DynamicJsonDocument doc(capacity);
-
-const char* json = "{\"cod\":\"200\",\"message\":0.0054,\"cnt\":4,\"list\":[{\"dt\":1551225600,\"main\":{\"temp\":7.28,\"temp_min\":2.63,\"temp_max\":7.28,\"pressure\":1027.34,\"sea_level\":1027.34,\"grnd_level\":993.64,\"humidity\":77,\"temp_kf\":4.64},\"weather\":[{\"id\":800,\"main\":\"Clear\",\"description\":\"cielo sereno\",\"icon\":\"01n\"}],\"clouds\":{\"all\":0},\"wind\":{\"speed\":0.6,\"deg\":77.0071},\"sys\":{\"pod\":\"n\"},\"dt_txt\":\"2019-02-27 00:00:00\"},{\"dt\":1551236400,\"main\":{\"temp\":5.51,\"temp_min\":2.02,\"temp_max\":5.51,\"pressure\":1027.08,\"sea_level\":1027.08,\"grnd_level\":993.13,\"humidity\":74,\"temp_kf\":3.48},\"weather\":[{\"id\":800,\"main\":\"Clear\",\"description\":\"cielo sereno\",\"icon\":\"01n\"}],\"clouds\":{\"all\":0},\"wind\":{\"speed\":1.91,\"deg\":36.5007},\"sys\":{\"pod\":\"n\"},\"dt_txt\":\"2019-02-27 03:00:00\"},{\"dt\":1551247200,\"main\":{\"temp\":4.42,\"temp_min\":2.1,\"temp_max\":4.42,\"pressure\":1027.59,\"sea_level\":1027.59,\"grnd_level\":993.61,\"humidity\":72,\"temp_kf\":2.32},\"weather\":[{\"id\":800,\"main\":\"Clear\",\"description\":\"cielo sereno\",\"icon\":\"01n\"}],\"clouds\":{\"all\":0},\"wind\":{\"speed\":2.7,\"deg\":50.0024},\"sys\":{\"pod\":\"n\"},\"dt_txt\":\"2019-02-27 06:00:00\"},{\"dt\":1551258000,\"main\":{\"temp\":10.82,\"temp_min\":9.66,\"temp_max\":10.82,\"pressure\":1028.08,\"sea_level\":1028.08,\"grnd_level\":994.44,\"humidity\":78,\"temp_kf\":1.16},\"weather\":[{\"id\":800,\"main\":\"Clear\",\"description\":\"cielo sereno\",\"icon\":\"01d\"}],\"clouds\":{\"all\":0},\"wind\":{\"speed\":2.01,\"deg\":87.0018},\"sys\":{\"pod\":\"d\"},\"dt_txt\":\"2019-02-27 09:00:00\"}],\"city\":{\"id\":6534286,\"name\":\"Bernareggio\",\"coord\":{\"lat\":45.6485,\"lon\":9.4064},\"country\":\"IT\",\"population\":8298}}";
-
-deserializeJson(doc, json);
-
-const char* cod = doc["cod"]; // "200"
-float message = doc["message"]; // 0.0054
-int cnt = doc["cnt"]; // 4
-
-JsonArray list = doc["list"];
-
-JsonObject list_0 = list[0];
-long list_0_dt = list_0["dt"]; // 1551225600
-
-JsonObject list_0_main = list_0["main"];
-float list_0_main_temp = list_0_main["temp"]; // 7.28
-float list_0_main_temp_min = list_0_main["temp_min"]; // 2.63
-float list_0_main_temp_max = list_0_main["temp_max"]; // 7.28
-float list_0_main_pressure = list_0_main["pressure"]; // 1027.34
-float list_0_main_sea_level = list_0_main["sea_level"]; // 1027.34
-float list_0_main_grnd_level = list_0_main["grnd_level"]; // 993.64
-int list_0_main_humidity = list_0_main["humidity"]; // 77
-float list_0_main_temp_kf = list_0_main["temp_kf"]; // 4.64
-
-JsonObject list_0_weather_0 = list_0["weather"][0];
-int list_0_weather_0_id = list_0_weather_0["id"]; // 800
-const char* list_0_weather_0_main = list_0_weather_0["main"]; // "Clear"
-const char* list_0_weather_0_description = list_0_weather_0["description"]; // "cielo sereno"
-const char* list_0_weather_0_icon = list_0_weather_0["icon"]; // "01n"
-
-int list_0_clouds_all = list_0["clouds"]["all"]; // 0
-
-float list_0_wind_speed = list_0["wind"]["speed"]; // 0.6
-float list_0_wind_deg = list_0["wind"]["deg"]; // 77.0071
-
-const char* list_0_sys_pod = list_0["sys"]["pod"]; // "n"
-
-const char* list_0_dt_txt = list_0["dt_txt"]; // "2019-02-27 00:00:00"
-
-JsonObject list_1 = list[1];
-long list_1_dt = list_1["dt"]; // 1551236400
-
-JsonObject list_1_main = list_1["main"];
-float list_1_main_temp = list_1_main["temp"]; // 5.51
-float list_1_main_temp_min = list_1_main["temp_min"]; // 2.02
-float list_1_main_temp_max = list_1_main["temp_max"]; // 5.51
-float list_1_main_pressure = list_1_main["pressure"]; // 1027.08
-float list_1_main_sea_level = list_1_main["sea_level"]; // 1027.08
-float list_1_main_grnd_level = list_1_main["grnd_level"]; // 993.13
-int list_1_main_humidity = list_1_main["humidity"]; // 74
-float list_1_main_temp_kf = list_1_main["temp_kf"]; // 3.48
-
-JsonObject list_1_weather_0 = list_1["weather"][0];
-int list_1_weather_0_id = list_1_weather_0["id"]; // 800
-const char* list_1_weather_0_main = list_1_weather_0["main"]; // "Clear"
-const char* list_1_weather_0_description = list_1_weather_0["description"]; // "cielo sereno"
-const char* list_1_weather_0_icon = list_1_weather_0["icon"]; // "01n"
-
-int list_1_clouds_all = list_1["clouds"]["all"]; // 0
-
-float list_1_wind_speed = list_1["wind"]["speed"]; // 1.91
-float list_1_wind_deg = list_1["wind"]["deg"]; // 36.5007
-
-const char* list_1_sys_pod = list_1["sys"]["pod"]; // "n"
-
-const char* list_1_dt_txt = list_1["dt_txt"]; // "2019-02-27 03:00:00"
-
-JsonObject list_2 = list[2];
-long list_2_dt = list_2["dt"]; // 1551247200
-
-JsonObject list_2_main = list_2["main"];
-float list_2_main_temp = list_2_main["temp"]; // 4.42
-float list_2_main_temp_min = list_2_main["temp_min"]; // 2.1
-float list_2_main_temp_max = list_2_main["temp_max"]; // 4.42
-float list_2_main_pressure = list_2_main["pressure"]; // 1027.59
-float list_2_main_sea_level = list_2_main["sea_level"]; // 1027.59
-float list_2_main_grnd_level = list_2_main["grnd_level"]; // 993.61
-int list_2_main_humidity = list_2_main["humidity"]; // 72
-float list_2_main_temp_kf = list_2_main["temp_kf"]; // 2.32
-
-JsonObject list_2_weather_0 = list_2["weather"][0];
-int list_2_weather_0_id = list_2_weather_0["id"]; // 800
-const char* list_2_weather_0_main = list_2_weather_0["main"]; // "Clear"
-const char* list_2_weather_0_description = list_2_weather_0["description"]; // "cielo sereno"
-const char* list_2_weather_0_icon = list_2_weather_0["icon"]; // "01n"
-
-int list_2_clouds_all = list_2["clouds"]["all"]; // 0
-
-float list_2_wind_speed = list_2["wind"]["speed"]; // 2.7
-float list_2_wind_deg = list_2["wind"]["deg"]; // 50.0024
-
-const char* list_2_sys_pod = list_2["sys"]["pod"]; // "n"
-
-const char* list_2_dt_txt = list_2["dt_txt"]; // "2019-02-27 06:00:00"
-
-JsonObject list_4 = list[4];
-long list_4_dt = list_4["dt"]; // 1551258000
-
-JsonObject list_4_main = list_4["main"];
-float list_4_main_temp = list_4_main["temp"]; // 10.82
-float list_4_main_temp_min = list_4_main["temp_min"]; // 9.66
-float list_4_main_temp_max = list_4_main["temp_max"]; // 10.82
-float list_4_main_pressure = list_4_main["pressure"]; // 1028.08
-float list_4_main_sea_level = list_4_main["sea_level"]; // 1028.08
-float list_4_main_grnd_level = list_4_main["grnd_level"]; // 994.44
-int list_4_main_humidity = list_4_main["humidity"]; // 78
-float list_4_main_temp_kf = list_4_main["temp_kf"]; // 1.16
-
-JsonObject list_4_weather_0 = list_4["weather"][0];
-int list_4_weather_0_id = list_4_weather_0["id"]; // 800
-const char* list_4_weather_0_main = list_4_weather_0["main"]; // "Clear"
-const char* list_4_weather_0_description = list_4_weather_0["description"]; // "cielo sereno"
-const char* list_4_weather_0_icon = list_4_weather_0["icon"]; // "01d"
-
-int list_4_clouds_all = list_4["clouds"]["all"]; // 0
-
-float list_4_wind_speed = list_4["wind"]["speed"]; // 2.01
-float list_4_wind_deg = list_4["wind"]["deg"]; // 87.0018
-
-const char* list_4_sys_pod = list_4["sys"]["pod"]; // "d"
-
-const char* list_4_dt_txt = list_4["dt_txt"]; // "2019-02-27 09:00:00"
-
-JsonObject city = doc["city"];
-long city_id = city["id"]; // 6534286
-const char* city_name = city["name"]; // "Bernareggio"
-
-float city_coord_lat = city["coord"]["lat"]; // 45.6485
-float city_coord_lon = city["coord"]["lon"]; // 9.4064
-
-const char* city_country = city["country"]; // "IT"
-int city_population = city["population"]; // 8298
-
-
-
-
-/*
         const size_t capacity = 4*JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + 8*JSON_OBJECT_SIZE(1) + 5*JSON_OBJECT_SIZE(2) + 4*JSON_OBJECT_SIZE(4) + 2*JSON_OBJECT_SIZE(5) + 4*JSON_OBJECT_SIZE(7) + 4*JSON_OBJECT_SIZE(8) + 980;
         DynamicJsonDocument doc(capacity);
         
-        deserializeJson(doc, line);
+        const char* json = "{\"cod\":\"200\",\"message\":0.0054,\"cnt\":4,\"list\":[{\"dt\":1551225600,\"main\":{\"temp\":7.28,\"temp_min\":2.63,\"temp_max\":7.28,\"pressure\":1027.34,\"sea_level\":1027.34,\"grnd_level\":993.64,\"humidity\":77,\"temp_kf\":4.64},\"weather\":[{\"id\":800,\"main\":\"Clear\",\"description\":\"cielo sereno\",\"icon\":\"01n\"}],\"clouds\":{\"all\":0},\"wind\":{\"speed\":0.6,\"deg\":77.0071},\"sys\":{\"pod\":\"n\"},\"dt_txt\":\"2019-02-27 00:00:00\"},{\"dt\":1551236400,\"main\":{\"temp\":5.51,\"temp_min\":2.02,\"temp_max\":5.51,\"pressure\":1027.08,\"sea_level\":1027.08,\"grnd_level\":993.13,\"humidity\":74,\"temp_kf\":3.48},\"weather\":[{\"id\":800,\"main\":\"Clear\",\"description\":\"cielo sereno\",\"icon\":\"01n\"}],\"clouds\":{\"all\":0},\"wind\":{\"speed\":1.91,\"deg\":36.5007},\"sys\":{\"pod\":\"n\"},\"dt_txt\":\"2019-02-27 03:00:00\"},{\"dt\":1551247200,\"main\":{\"temp\":4.42,\"temp_min\":2.1,\"temp_max\":4.42,\"pressure\":1027.59,\"sea_level\":1027.59,\"grnd_level\":993.61,\"humidity\":72,\"temp_kf\":2.32},\"weather\":[{\"id\":800,\"main\":\"Clear\",\"description\":\"cielo sereno\",\"icon\":\"01n\"}],\"clouds\":{\"all\":0},\"wind\":{\"speed\":2.7,\"deg\":50.0024},\"sys\":{\"pod\":\"n\"},\"dt_txt\":\"2019-02-27 06:00:00\"},{\"dt\":1551258000,\"main\":{\"temp\":10.82,\"temp_min\":9.66,\"temp_max\":10.82,\"pressure\":1028.08,\"sea_level\":1028.08,\"grnd_level\":994.44,\"humidity\":78,\"temp_kf\":1.16},\"weather\":[{\"id\":800,\"main\":\"Clear\",\"description\":\"cielo sereno\",\"icon\":\"01d\"}],\"clouds\":{\"all\":0},\"wind\":{\"speed\":2.01,\"deg\":87.0018},\"sys\":{\"pod\":\"d\"},\"dt_txt\":\"2019-02-27 09:00:00\"}],\"city\":{\"id\":6534286,\"name\":\"Bernareggio\",\"coord\":{\"lat\":45.6485,\"lon\":9.4064},\"country\":\"IT\",\"population\":8298}}";
         
-//        DynamicJsonBuffer jsonBuf;
-//        JsonObject& root = jsonBuf.parseObject(line);
-/*        if (!root.success())
-        {
-          return;
-        }
-
-// *************************** + 3H
-        JsonObject& list_0 = list[0];
-        long list_0_dt = list_0["dt"]; // 1551106800
+        deserializeJson(doc, json);
         
-        JsonObject& list_0_main = list_0["main"];
-        float list_0_main_temp = list_0_main["temp"]; // 13.63
-        float list_0_main_temp_min = list_0_main["temp_min"]; // 11.94
-        float list_0_main_temp_max = list_0_main["temp_max"]; // 13.63
-        float list_0_main_pressure = list_0_main["pressure"]; // 1033.77
-        float list_0_main_sea_level = list_0_main["sea_level"]; // 1033.77
-        float list_0_main_grnd_level = list_0_main["grnd_level"]; // 1000.2
-        int list_0_main_humidity = list_0_main["humidity"]; // 76
-        float list_0_main_temp_kf = list_0_main["temp_kf"]; // 1.69
+        const char* cod = doc["cod"]; // "200"
+        float message = doc["message"]; // 0.0054
+        int cnt = doc["cnt"]; // 4
         
-        JsonObject& list_0_weather_0 = list_0["weather"][0];
+        JsonArray list = doc["list"];
+        
+        JsonObject list_0 = list[0];
+        long list_0_dt = list_0["dt"]; // 1551225600
+        
+        JsonObject list_0_main = list_0["main"];
+        float list_0_main_temp = list_0_main["temp"]; // 7.28
+        float list_0_main_temp_min = list_0_main["temp_min"]; // 2.63
+        float list_0_main_temp_max = list_0_main["temp_max"]; // 7.28
+        float list_0_main_pressure = list_0_main["pressure"]; // 1027.34
+        float list_0_main_sea_level = list_0_main["sea_level"]; // 1027.34
+        float list_0_main_grnd_level = list_0_main["grnd_level"]; // 993.64
+        int list_0_main_humidity = list_0_main["humidity"]; // 77
+        float list_0_main_temp_kf = list_0_main["temp_kf"]; // 4.64
+        
+        JsonObject list_0_weather_0 = list_0["weather"][0];
         int list_0_weather_0_id = list_0_weather_0["id"]; // 800
         const char* list_0_weather_0_main = list_0_weather_0["main"]; // "Clear"
         const char* list_0_weather_0_description = list_0_weather_0["description"]; // "cielo sereno"
-        const char* list_0_weather_0_icon = list_0_weather_0["icon"]; // "01d"
+        const char* list_0_weather_0_icon = list_0_weather_0["icon"]; // "01n"
         
         int list_0_clouds_all = list_0["clouds"]["all"]; // 0
         
-        float list_0_wind_speed = list_0["wind"]["speed"]; // 1.82
-        float list_0_wind_deg = list_0["wind"]["deg"]; // 263.504
+        float list_0_wind_speed = list_0["wind"]["speed"]; // 0.6
+        float list_0_wind_deg = list_0["wind"]["deg"]; // 77.0071
         
-        const char* list_0_sys_pod = list_0["sys"]["pod"]; // "d"
+        const char* list_0_sys_pod = list_0["sys"]["pod"]; // "n"
         
-        const char* list_0_dt_txt = list_0["dt_txt"]; // "2019-02-25 15:00:00"
-// *************************** +6h
-        JsonObject& list_1 = list[1];
-        long list_1_dt = list_1["dt"]; // 1551117600
+        const char* list_0_dt_txt = list_0["dt_txt"]; // "2019-02-27 00:00:00"
         
-        JsonObject& list_1_main = list_1["main"];
-        float list_1_main_temp = list_1_main["temp"]; // 7.5
-        float list_1_main_temp_min = list_1_main["temp_min"]; // 6.23
-        float list_1_main_temp_max = list_1_main["temp_max"]; // 7.5
-        float list_1_main_pressure = list_1_main["pressure"]; // 1033.92
-        float list_1_main_sea_level = list_1_main["sea_level"]; // 1033.92
-        float list_1_main_grnd_level = list_1_main["grnd_level"]; // 999.97
-        int list_1_main_humidity = list_1_main["humidity"]; // 84
-        float list_1_main_temp_kf = list_1_main["temp_kf"]; // 1.27
+        JsonObject list_1 = list[1];
+        long list_1_dt = list_1["dt"]; // 1551236400
         
-        JsonObject& list_1_weather_0 = list_1["weather"][0];
+        JsonObject list_1_main = list_1["main"];
+        float list_1_main_temp = list_1_main["temp"]; // 5.51
+        float list_1_main_temp_min = list_1_main["temp_min"]; // 2.02
+        float list_1_main_temp_max = list_1_main["temp_max"]; // 5.51
+        float list_1_main_pressure = list_1_main["pressure"]; // 1027.08
+        float list_1_main_sea_level = list_1_main["sea_level"]; // 1027.08
+        float list_1_main_grnd_level = list_1_main["grnd_level"]; // 993.13
+        int list_1_main_humidity = list_1_main["humidity"]; // 74
+        float list_1_main_temp_kf = list_1_main["temp_kf"]; // 3.48
+        
+        JsonObject list_1_weather_0 = list_1["weather"][0];
         int list_1_weather_0_id = list_1_weather_0["id"]; // 800
         const char* list_1_weather_0_main = list_1_weather_0["main"]; // "Clear"
         const char* list_1_weather_0_description = list_1_weather_0["description"]; // "cielo sereno"
@@ -361,44 +176,82 @@ int city_population = city["population"]; // 8298
         
         int list_1_clouds_all = list_1["clouds"]["all"]; // 0
         
-        float list_1_wind_speed = list_1["wind"]["speed"]; // 1.61
-        float list_1_wind_deg = list_1["wind"]["deg"]; // 272.001
+        float list_1_wind_speed = list_1["wind"]["speed"]; // 1.91
+        float list_1_wind_deg = list_1["wind"]["deg"]; // 36.5007
         
         const char* list_1_sys_pod = list_1["sys"]["pod"]; // "n"
         
-        const char* list_1_dt_txt = list_1["dt_txt"]; // "2019-02-25 18:00:00"
-// *************************** +12h
-        JsonObject& list_4 = list[1];
-        long list_3_dt = list_3["dt"]; // 1551117600
+        const char* list_1_dt_txt = list_1["dt_txt"]; // "2019-02-27 03:00:00"
         
-        JsonObject& list_3_main = list_3["main"];
-        float list_3_main_temp = list_3_main["temp"]; // 7.5
-        float list_3_main_temp_min = list_3_main["temp_min"]; // 6.23
-        float list_3_main_temp_max = list_3_main["temp_max"]; // 7.5
-        float list_3_main_pressure = list_3_main["pressure"]; // 1033.92
-        float list_3_main_sea_level = list_3_main["sea_level"]; // 1033.92
-        float list_3_main_grnd_level = list_3_main["grnd_level"]; // 999.97
-        int list_3_main_humidity = list_3_main["humidity"]; // 84
-        float list_3_main_temp_kf = list_3_main["temp_kf"]; // 1.27
+        JsonObject list_2 = list[2];
+        long list_2_dt = list_2["dt"]; // 1551247200
         
-        JsonObject& list_3_weather_0 = list_3["weather"][0];
+        JsonObject list_2_main = list_2["main"];
+        float list_2_main_temp = list_2_main["temp"]; // 4.42
+        float list_2_main_temp_min = list_2_main["temp_min"]; // 2.1
+        float list_2_main_temp_max = list_2_main["temp_max"]; // 4.42
+        float list_2_main_pressure = list_2_main["pressure"]; // 1027.59
+        float list_2_main_sea_level = list_2_main["sea_level"]; // 1027.59
+        float list_2_main_grnd_level = list_2_main["grnd_level"]; // 993.61
+        int list_2_main_humidity = list_2_main["humidity"]; // 72
+        float list_2_main_temp_kf = list_2_main["temp_kf"]; // 2.32
+        
+        JsonObject list_2_weather_0 = list_2["weather"][0];
+        int list_2_weather_0_id = list_2_weather_0["id"]; // 800
+        const char* list_2_weather_0_main = list_2_weather_0["main"]; // "Clear"
+        const char* list_2_weather_0_description = list_2_weather_0["description"]; // "cielo sereno"
+        const char* list_2_weather_0_icon = list_2_weather_0["icon"]; // "01n"
+        
+        int list_2_clouds_all = list_2["clouds"]["all"]; // 0
+        
+        float list_2_wind_speed = list_2["wind"]["speed"]; // 2.7
+        float list_2_wind_deg = list_2["wind"]["deg"]; // 50.0024
+        
+        const char* list_2_sys_pod = list_2["sys"]["pod"]; // "n"
+        
+        const char* list_2_dt_txt = list_2["dt_txt"]; // "2019-02-27 06:00:00"
+        
+        JsonObject list_3 = list[3];
+        long list_3_dt = list_3["dt"]; // 1551258000
+        
+        JsonObject list_3_main = list_3["main"];
+        float list_3_main_temp = list_3_main["temp"]; // 10.82
+        float list_3_main_temp_min = list_3_main["temp_min"]; // 9.66
+        float list_3_main_temp_max = list_3_main["temp_max"]; // 10.82
+        float list_3_main_pressure = list_3_main["pressure"]; // 1028.08
+        float list_3_main_sea_level = list_3_main["sea_level"]; // 1028.08
+        float list_3_main_grnd_level = list_3_main["grnd_level"]; // 994.44
+        int list_3_main_humidity = list_3_main["humidity"]; // 78
+        float list_3_main_temp_kf = list_3_main["temp_kf"]; // 1.16
+        
+        JsonObject list_3_weather_0 = list_3["weather"][0];
         int list_3_weather_0_id = list_3_weather_0["id"]; // 800
         const char* list_3_weather_0_main = list_3_weather_0["main"]; // "Clear"
         const char* list_3_weather_0_description = list_3_weather_0["description"]; // "cielo sereno"
-        const char* list_3_weather_0_icon = list_3_weather_0["icon"]; // "01n"
+        const char* list_3_weather_0_icon = list_3_weather_0["icon"]; // "01d"
         
         int list_3_clouds_all = list_3["clouds"]["all"]; // 0
         
-        float list_3_wind_speed = list_3["wind"]["speed"]; // 1.61
-        float list_3_wind_deg = list_3["wind"]["deg"]; // 272.001
+        float list_3_wind_speed = list_3["wind"]["speed"]; // 2.01
+        float list_3_wind_deg = list_3["wind"]["deg"]; // 87.0018
         
-        const char* list_3_sys_pod = list_3["sys"]["pod"]; // "n"
+        const char* list_3_sys_pod = list_3["sys"]["pod"]; // "d"
         
-        const char* list_3_dt_txt = list_3["dt_txt"]; // "2019-02-25 18:00:00"
+        const char* list_3_dt_txt = list_3["dt_txt"]; // "2019-02-27 09:00:00"
+        
+        JsonObject city = doc["city"];
+        long city_id = city["id"]; // 6534286
+        const char* city_name = city["name"]; // "Bernareggio"
+        
+        float city_coord_lat = city["coord"]["lat"]; // 45.6485
+        float city_coord_lon = city["coord"]["lon"]; // 9.4064
+        
+        const char* city_country = city["country"]; // "IT"
+        int city_population = city["population"]; // 8298
 
 
 // ***************************
-      */
+     
         next3.de = list_0_weather_0_description;
         next3.ic = list_0_weather_0_icon;
         next3.te = list_0_main_temp;
@@ -421,16 +274,16 @@ int city_population = city["population"]; // 8298
         next6.wd = list_1_wind_deg;
         next6.ti = "+6h";//list_1_dt_txt;
 
-        next12.de = list_4_weather_0_description;
-        next12.ic = list_4_weather_0_icon;
-        next12.te = list_4_main_temp;
-        next12.mi = list_4_main_temp_min;
-        next12.mx = list_4_main_temp_max;
-        next12.hu = list_4_main_humidity;
-        next12.pr = list_4_main_pressure;
-        next12.ws = list_4_wind_speed;
-        next12.wd = list_4_wind_deg;
-        next12.ti = "+12h";//list_4_dt_txt;
+        next9.de = list_3_weather_0_description;
+        next9.ic = list_3_weather_0_icon;
+        next9.te = list_3_main_temp;
+        next9.mi = list_3_main_temp_min;
+        next9.mx = list_3_main_temp_max;
+        next9.hu = list_3_main_humidity;
+        next9.pr = list_3_main_pressure;
+        next9.ws = list_3_wind_speed;
+        next9.wd = list_3_wind_deg;
+        next9.ti = "+9h";//list_3_dt_txt;
       }
     }
     client.stop();
@@ -559,90 +412,7 @@ void getWeatherDaily()
         int list_2_clouds = list_2["clouds"]; // 0
 
 
-/*        
-        DynamicJsonBuffer jsonBuf;
-        JsonObject& root = jsonBuf.parseObject(line);
-        if (!root.success())
-        {
-          return;
-        }
 
-// *************************** + 1d
-        JsonObject& list_0 = list[0];
-        long list_0_dt = list_0["dt"]; // 1551092400
-        
-        JsonObject& list_0_temp = list_0["temp"];
-        int list_0_temp_day = list_0_temp["day"]; // 14
-        float list_0_temp_min = list_0_temp["min"]; // 1.68
-        float list_0_temp_max = list_0_temp["max"]; // 14.31
-        float list_0_temp_night = list_0_temp["night"]; // 1.68
-        int list_0_temp_eve = list_0_temp["eve"]; // 8
-        int list_0_temp_morn = list_0_temp["morn"]; // 14
-        
-        float list_0_pressure = list_0["pressure"]; // 1034.71
-        int list_0_humidity = list_0["humidity"]; // 83
-        
-        JsonObject& list_0_weather_0 = list_0["weather"][0];
-        int list_0_weather_0_id = list_0_weather_0["id"]; // 800
-        const char* list_0_weather_0_main = list_0_weather_0["main"]; // "Clear"
-        const char* list_0_weather_0_description = list_0_weather_0["description"]; // "cielo sereno"
-        const char* list_0_weather_0_icon = list_0_weather_0["icon"]; // "01d"
-        
-        float list_0_speed = list_0["speed"]; // 1.86
-        int list_0_deg = list_0["deg"]; // 235
-        int list_0_clouds = list_0["clouds"]; // 0
-
-// *************************** +2d
-        JsonObject& list_1 = list[1];
-        long list_1_dt = list_1["dt"]; // 1551092400
-        
-        JsonObject& list_1_temp = list_1["temp"];
-        int list_1_temp_day = list_1_temp["day"]; // 14
-        float list_1_temp_min = list_1_temp["min"]; // 1.68
-        float list_1_temp_max = list_1_temp["max"]; // 14.31
-        float list_1_temp_night = list_1_temp["night"]; // 1.68
-        int list_1_temp_eve = list_1_temp["eve"]; // 8
-        int list_1_temp_morn = list_1_temp["morn"]; // 14
-        
-        float list_1_pressure = list_1["pressure"]; // 1034.71
-        int list_1_humidity = list_1["humidity"]; // 83
-        
-        JsonObject& list_1_weather_0 = list_1["weather"][0];
-        int list_1_weather_0_id = list_1_weather_0["id"]; // 800
-        const char* list_1_weather_0_main = list_1_weather_0["main"]; // "Clear"
-        const char* list_1_weather_0_description = list_1_weather_0["description"]; // "cielo sereno"
-        const char* list_1_weather_0_icon = list_1_weather_0["icon"]; // "01d"
-        
-        float list_1_speed = list_1["speed"]; // 1.86
-        int list_1_deg = list_1["deg"]; // 235
-        int list_1_clouds = list_1["clouds"]; // 0
-
-// *************************** +3d
-        JsonObject& list_2 = list[2];
-        long list_2_dt = list_2["dt"]; // 1551092400
-        
-        JsonObject& list_2_temp = list_2["temp"];
-        int list_2_temp_day = list_2_temp["day"]; // 14
-        float list_2_temp_min = list_2_temp["min"]; // 1.68
-        float list_2_temp_max = list_2_temp["max"]; // 14.31
-        float list_2_temp_night = list_2_temp["night"]; // 1.68
-        int list_2_temp_eve = list_2_temp["eve"]; // 8
-        int list_2_temp_morn = list_2_temp["morn"]; // 14
-        
-        float list_2_pressure = list_2["pressure"]; // 1034.71
-        int list_2_humidity = list_2["humidity"]; // 83
-        
-        JsonObject& list_2_weather_0 = list_2["weather"][0];
-        int list_2_weather_0_id = list_2_weather_0["id"]; // 800
-        const char* list_2_weather_0_main = list_2_weather_0["main"]; // "Clear"
-        const char* list_2_weather_0_description = list_2_weather_0["description"]; // "cielo sereno"
-        const char* list_2_weather_0_icon = list_2_weather_0["icon"]; // "01d"
-        
-        float list_2_speed = list_2["speed"]; // 1.86
-        int list_2_deg = list_2["deg"]; // 235
-        int list_2_clouds = list_2["clouds"]; // 0
-// ***************************
-      */
         dp1.de = list_0_weather_0_description;
         dp1.ic = list_0_weather_0_icon;
         dp1.te = list_0_temp_day;

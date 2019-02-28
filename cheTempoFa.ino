@@ -94,7 +94,7 @@ typedef struct {
 weather_data current;
 weather_data next3;
 weather_data next6;
-weather_data next12;
+weather_data next9;
 weather_data dp1;
 weather_data dp2;
 weather_data dp3;
@@ -197,7 +197,7 @@ void loop()
     if (reading != buttonState) {
       buttonState = reading;
 
-      if (buttonState == Low) {
+      if (buttonState == LOW) {
         previousMillis = currentMillis;
         displayWhat++;
         if (displayWhat>6){
@@ -239,8 +239,8 @@ void loop()
       case 2: // +6h
         printWeather(next6);
         break;
-      case 3: // +12h
-        printWeather(next12);
+      case 3: // +9h
+        printWeather(next9);
         break;
       case 4: // +1d
         printWeather(dp1);
