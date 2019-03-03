@@ -76,7 +76,10 @@ void getWeather()
         current.ws = wind_speed;
         current.wd = wind_deg;
         current.vi = visibility;
+        current.ep = dt;
         current.ti = "";
+        Serial.print("current ");
+        Serial.println(current.ep);
       }
     }
     client.stop();
@@ -261,7 +264,8 @@ void getWeatherHourly()
         next3.pr = list_0_main_pressure;
         next3.ws = list_0_wind_speed;
         next3.wd = list_0_wind_deg;
-        next3.ti = "+3h";//list_0_dt_txt;
+        next3.ep = list_0_dt;
+        next3.ti = "0"+String((list_0_dt % 86400)/3600)+":00";
         
         next6.de = list_1_weather_0_description;
         next6.ic = list_1_weather_0_icon;
@@ -272,7 +276,8 @@ void getWeatherHourly()
         next6.pr = list_1_main_pressure;
         next6.ws = list_1_wind_speed;
         next6.wd = list_1_wind_deg;
-        next6.ti = "+6h";//list_1_dt_txt;
+        next6.ep = list_1_dt;
+        next6.ti = "0"+String((list_1_dt % 86400)/3600)+":00";
 
         next9.de = list_3_weather_0_description;
         next9.ic = list_3_weather_0_icon;
@@ -283,7 +288,15 @@ void getWeatherHourly()
         next9.pr = list_3_main_pressure;
         next9.ws = list_3_wind_speed;
         next9.wd = list_3_wind_deg;
-        next9.ti = "+9h";//list_3_dt_txt;
+        next9.ep = list_3_dt;
+        next9.ti = "0"+String((list_3_dt % 86400)/3600)+":00";
+        Serial.print("next3h ");
+        Serial.println(next3.ep);
+        Serial.print("next6h ");
+        Serial.println(next6.ep);
+        Serial.print("next9h ");
+        Serial.println(next9.ep);
+
       }
     }
     client.stop();
@@ -295,6 +308,7 @@ void getWeatherHourly()
   
 }
 
+//api.openweathermap.org/data/2.5/forecast/daily?q=Bernareggio,It&appid=2f31dba5954c10dc63d1047e2c28acf3&cnt=4&lang=it&units=Metric&cnt=4
 void getWeatherDaily()
 {
   WiFiClient client;
@@ -422,6 +436,7 @@ void getWeatherDaily()
         dp1.pr = list_0_pressure;
         dp1.ws = list_0_speed;
         dp1.wd = list_0_deg;
+        dp1.ep = list_0_dt;
         dp1.ti = "+1D";//list_0_dt;
         
         dp2.de = list_1_weather_0_description;
@@ -433,6 +448,7 @@ void getWeatherDaily()
         dp2.pr = list_1_pressure;
         dp2.ws = list_1_speed;
         dp2.wd = list_1_deg;
+        dp2.ep = list_1_dt;
         dp2.ti = "+2D";//list_1_dt;
 
         dp3.de = list_2_weather_0_description;
@@ -444,7 +460,15 @@ void getWeatherDaily()
         dp3.pr = list_2_pressure;
         dp3.ws = list_2_speed;
         dp3.wd = list_2_deg;
+        dp3.ep = list_2_dt;
         dp3.ti = "+3D";//list_2_dt;
+        Serial.print("next1 ");
+        Serial.println(dp1.ep);
+        Serial.print("next2 ");
+        Serial.println(dp2.ep);
+        Serial.print("next3 ");
+        Serial.println(dp3.ep);
+
       }
     }
     client.stop();

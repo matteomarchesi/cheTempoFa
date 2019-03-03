@@ -37,7 +37,7 @@ void printWeather(weather_data data){
   display.clearDisplay();
   display.setCursor(0,0);
   display.print(data.de);
-  display.setCursor(100,0);
+  display.setCursor(96,0);
   display.print(data.ti);
   display.setCursor(0,8);
   display.printf("%4dhPa %3d%%RH", data.pr, data.hu);

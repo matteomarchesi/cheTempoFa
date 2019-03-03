@@ -89,6 +89,7 @@ typedef struct {
   int    wd; // wind direction
   int    vi; // visibility 
   String ti; // time
+  long   ep; // epoch day time
 } weather_data;
 
 weather_data current;
