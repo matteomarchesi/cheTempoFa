@@ -10,21 +10,62 @@ void printTime()
   sec = timeinfo->tm_sec;
   ora = timeinfo->tm_hour;
 }
-/*
-bool checkDST()
+
+
+
+
+void checkDST()
 {
-  WiFiClient clientTime;
-  bool isDayLightSavingsTime = false;
+  WiFiClient client;
+//  bool isDayLightSavingsTime = false;
   
   String timeHost = "worldclockapi.com";
-  if (clientTime.connect(timeHost, 80))
+  if (client.connect(timeHost, 80))
   {
-    clientTime.print(String("GET /api/json/cet/now") +
+    client.print(String("GET /api/json/cet/now") +
                 "\r\n"+
                  "Host: " + timeHost + "\r\n" +
                  "Connection: close\r\n" +
                  "\r\n"
     );
+
+    while (client.connected() || client.available())
+    {
+      if (client.available())
+      {
+        String line = client.readStringUntil('\n');
+// Json
+        const size_t capacity = JSON_OBJECT_SIZE(9) + 230;
+        DynamicJsonDocument doc(capacity);
+        deserializeJson(doc, line);
+        
+//        const char* _id = doc["$id"]; // "1"
+//        const char* currentDateTime = doc["currentDateTime"]; // "2019-03-04T10:41+01:00"
+        const char* utcOffset = doc["utcOffset"]; // "01:00:00"
+        bool isDayLightSavingsTime = doc["isDayLightSavingsTime"]; // false
+//        const char* dayOfTheWeek = doc["dayOfTheWeek"]; // "Monday"
+//        const char* timeZoneName = doc["timeZoneName"]; // "Central Europe Standard Time"
+//        long currentFileTime = doc["currentFileTime"]; // 131961696759378690
+//        const char* ordinalDate = doc["ordinalDate"]; // "2019-63"
+
+		if (isDayLightSavingsTime) {dst_tz.dst = 3600;}
+		else {dst_tz.dst = 0;}
+    String utco_tmp = String(utcOffset);
+		dst_tz.tz = utco_tmp.substring(0,utco_tmp.indexOf(":")-1).toInt()*3600;
+      }
+    }
+    client.stop();
+
+  }
+	
+  else
+  {
+    client.stop();
+  }
+  
+}
+	
+/*	
     while (clientTime.connected() || clientTime.available())
     {
       if (clientTime.available())
@@ -46,7 +87,7 @@ bool checkDST()
   }
   return isDayLightSavingsTime;
  }
-  
+  */
 /*
    int tm_sec;         /* seconds,  range 0 to 59          
    int tm_min;         /* minutes, range 0 to 59           

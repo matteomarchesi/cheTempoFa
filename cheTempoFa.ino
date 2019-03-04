@@ -77,6 +77,13 @@ char buffer[80];
 time_t rawtime;
 struct tm * timeinfo;
 
+typedef struct{
+	long dst = 0;
+	long tz = 3600;
+} dsttz;
+
+dsttz dst_tz;
+
 typedef struct {
   String de; // description
   String ic; // icon
@@ -88,6 +95,7 @@ typedef struct {
   float  ws; // wind speed
   int    wd; // wind direction
   int    vi; // visibility 
+  int	 cl; // clouds
   String ti; // time
   long   ep; // epoch day time
 } weather_data;
@@ -109,7 +117,7 @@ void getWeatherHourly();
 void clearLine(int lineN);
 void clearChar(int lineN, int colN);
 void printTime();
-bool checkDST();
+void checkDST();
 
 unsigned long previousMillis = 0;
 unsigned long interval = 5000;
@@ -157,8 +165,10 @@ void setup()
   Serial.println(" connected");
   display.println("\nconnected");
   display.display();
+  checkDST();
 
-  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+//  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+  configTime(dst_tz.tz, dst_tz.dst, ntpServer);
 
   Serial.println("\nWaiting for time");
   unsigned timeout = 5000;
@@ -214,14 +224,7 @@ void loop()
   
 // Debounce end
   
-/*  
-  if (reading==0){
-      previousMillis = currentMillis;
-      displayWhat++;
-      if (displayWhat>6){
-          displayWhat=0;
-        }
-    }*/
+
 // 5" after last keypressed reset display
   if (currentMillis-previousMillis > interval){
     displayWhat=0;
@@ -256,6 +259,10 @@ void loop()
     sec_pre = sec;
   }
   if (ora!=ora_pre){
+  	if (ora==4){
+      checkDST();
+  		configTime(dst_tz.tz, dst_tz.dst, ntpServer);
+  	}
     getWeather();
     getWeatherHourly();
     getWeatherDaily();
