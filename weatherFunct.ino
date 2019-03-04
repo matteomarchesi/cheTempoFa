@@ -22,7 +22,7 @@ void getWeather()
 // Json
         const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(1) + 2*JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(4) + JSON_OBJECT_SIZE(5) + JSON_OBJECT_SIZE(6) + JSON_OBJECT_SIZE(12) + 270;
         DynamicJsonDocument doc(capacity);
-
+ 
         deserializeJson(doc, line);
 
 //        float coord_lon = doc["coord"]["lon"]; // 9.41
@@ -76,11 +76,9 @@ void getWeather()
         current.ws = wind_speed;
         current.wd = wind_deg;
         current.vi = visibility;
-		current.cl = clouds_all;
+		    current.cl = clouds_all;
         current.ep = dt;
         current.ti = "";
-        Serial.print("current ");
-        Serial.println(current.ep);
       }
     }
     client.stop();
@@ -265,12 +263,10 @@ void getWeatherHourly()
         next3.pr = list_0_main_pressure;
         next3.ws = list_0_wind_speed;
         next3.wd = list_0_wind_deg;
-		next3.vi = 0;
-		next3.cl = list_0_clouds_all;
+    		next3.vi = 0;
+    		next3.cl = list_0_clouds_all;
         next3.ep = list_0_dt;
-//        next3.ti = "0"+String((list_0_dt % 86400)/3600)+":00";
-		int h = (next3.ep+dst_tz.tz+dst_tz.dst) % 86400 / 3600;
-		if (h<10){next3.ti = "0"+String(h)+":00";}		else{next3.ti = String(h)+":00";}
+        next3.ti = String(list_0_dt_txt).substring(String(list_0_dt_txt).indexOf(":")-2,String(list_0_dt_txt).indexOf(":"))+":00";
         
         next6.de = list_1_weather_0_description;
         next6.ic = list_1_weather_0_icon;
@@ -281,38 +277,24 @@ void getWeatherHourly()
         next6.pr = list_1_main_pressure;
         next6.ws = list_1_wind_speed;
         next6.wd = list_1_wind_deg;
-        next6.wd = list_0_wind_deg;
-		next6.vi = 0;
+        next6.wd = list_1_wind_deg;
+    		next6.vi = 0;
         next6.ep = list_1_dt;
-//        next6.ti = "0"+String((list_1_dt % 86400)/3600)+":00";
-		h = (next6.ep+next3.ep+dst_tz.tz+dst_tz.dst) % 86400 / 3600;
-		if (h<10){next6.ti = "0"+String(h)+":00";}else{next6.ti = String(h)+":00";};
-
+        next6.ti = String(list_1_dt_txt).substring(String(list_1_dt_txt).indexOf(":")-2,String(list_1_dt_txt).indexOf(":"))+":00";
 		
-        next9.de = list_3_weather_0_description;
-        next9.ic = list_3_weather_0_icon;
-        next9.te = list_3_main_temp;
-        next9.mi = list_3_main_temp_min;
-        next9.mx = list_3_main_temp_max;
-        next9.hu = list_3_main_humidity;
-        next9.pr = list_3_main_pressure;
-        next9.ws = list_3_wind_speed;
-        next9.wd = list_3_wind_deg;
-        next9.wd = list_0_wind_deg;
-		next9.vi = 0;
-        next9.ep = list_3_dt;
-//        next9.ti = "0"+String((list_3_dt % 86400)/3600)+":00";		
-		h = (next9.ep+next3.ep+dst_tz.tz+dst_tz.dst) % 86400 / 3600;
-		if (h<10){next9.ti = "0"+String(h)+":00";}else{next9.ti = String(h)+":00";};
-		
-
-        Serial.print("next3h ");
-        Serial.println(next3.ep);
-        Serial.print("next6h ");
-        Serial.println(next6.ep);
-        Serial.print("next9h ");
-        Serial.println(next9.ep);
-
+        next9.de = list_2_weather_0_description;
+        next9.ic = list_2_weather_0_icon;
+        next9.te = list_2_main_temp;
+        next9.mi = list_2_main_temp_min;
+        next9.mx = list_2_main_temp_max;
+        next9.hu = list_2_main_humidity;
+        next9.pr = list_2_main_pressure;
+        next9.ws = list_2_wind_speed;
+        next9.wd = list_2_wind_deg;
+        next9.wd = list_2_wind_deg;
+    		next9.vi = 0;
+        next9.ep = list_2_dt;
+        next9.ti = String(list_2_dt_txt).substring(String(list_2_dt_txt).indexOf(":")-2,String(list_2_dt_txt).indexOf(":"))+":00";
       }
     }
     client.stop();
@@ -335,7 +317,7 @@ void getWeatherDaily()
                 "q="+location+
                 "&appid="+apiKey+
                 "&cnt=4"+lang+
-                "&units=Metric&cnt=3\r\n"+
+                "&units=Metric&cnt=4\r\n"+
                  "Host: " + host + "\r\n" +
                  "Connection: close\r\n" +
                  "\r\n"
@@ -347,8 +329,7 @@ void getWeatherDaily()
       {
         String line = client.readStringUntil('\n');
 // Json
-
-        const size_t capacity = 3*JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(3) + JSON_OBJECT_SIZE(2) + 3*JSON_OBJECT_SIZE(4) + 2*JSON_OBJECT_SIZE(5) + 3*JSON_OBJECT_SIZE(6) + 3*JSON_OBJECT_SIZE(8) + 520;
+        const size_t capacity = 4*JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(2) + 4*JSON_OBJECT_SIZE(4) + 2*JSON_OBJECT_SIZE(5) + 4*JSON_OBJECT_SIZE(6) + 2*JSON_OBJECT_SIZE(8) + 2*JSON_OBJECT_SIZE(9) + 680;
         DynamicJsonDocument doc(capacity);
         
         deserializeJson(doc, line);
@@ -443,7 +424,7 @@ void getWeatherDaily()
         int list_2_clouds = list_2["clouds"]; // 0
 
 // *******************
-        JsonObject list_3 = list[2];
+        JsonObject list_3 = list[3];
         long list_3_dt = list_3["dt"]; // 1551351600
         
         JsonObject list_3_temp = list_3["temp"];
@@ -466,7 +447,6 @@ void getWeatherDaily()
 		
         dp1.de = list_1_weather_0_description;
         dp1.ic = list_1_weather_0_icon;
-//        dp1.te = list_1_temp_day;
         dp1.mi = list_1_temp_min;
         dp1.mx = list_1_temp_max;
         dp1.hu = list_1_humidity;
@@ -474,12 +454,11 @@ void getWeatherDaily()
         dp1.ws = list_1_speed;
         dp1.wd = list_1_deg;
         dp1.ep = list_1_dt;
-		dp1.cl = list_1_clouds;
+		    dp1.cl = list_1_clouds;
         dp1.ti = "+1 D";//list_0_dt;
 
         dp2.de = list_2_weather_0_description;
         dp2.ic = list_2_weather_0_icon;
-//        dp2.te = list_2_temp_day;
         dp2.mi = list_2_temp_min;
         dp2.mx = list_2_temp_max;
         dp2.hu = list_2_humidity;
@@ -487,12 +466,11 @@ void getWeatherDaily()
         dp2.ws = list_2_speed;
         dp2.wd = list_2_deg;
         dp2.ep = list_2_dt;
-		dp2.cl = list_2_clouds;
+		    dp2.cl = list_2_clouds;
         dp2.ti = "+2 D";//list_0_dt;
 
         dp3.de = list_3_weather_0_description;
         dp3.ic = list_3_weather_0_icon;
-//        dp3.te = list_3_temp_day;
         dp3.mi = list_3_temp_min;
         dp3.mx = list_3_temp_max;
         dp3.hu = list_3_humidity;
@@ -500,53 +478,9 @@ void getWeatherDaily()
         dp3.ws = list_3_speed;
         dp3.wd = list_3_deg;
         dp3.ep = list_3_dt;
-		dp3.cl = list_3_clouds;
+		    dp3.cl = list_3_clouds;
         dp3.ti = "+3 D";//list_0_dt;
 
-
-/*
-        dp1.de = list_0_weather_0_description;
-        dp1.ic = list_0_weather_0_icon;
-        dp1.te = list_0_temp_day;
-        dp1.mi = list_0_temp_min;
-        dp1.mx = list_0_temp_max;
-        dp1.hu = list_0_humidity;
-        dp1.pr = list_0_pressure;
-        dp1.ws = list_0_speed;
-        dp1.wd = list_0_deg;
-        dp1.ep = list_0_dt;
-        dp1.ti = "+1D";//list_0_dt;
-        
-        dp2.de = list_1_weather_0_description;
-        dp2.ic = list_1_weather_0_icon;
-        dp2.te = list_1_temp_day;
-        dp2.mi = list_1_temp_min;
-        dp2.mx = list_1_temp_max;
-        dp2.hu = list_1_humidity;
-        dp2.pr = list_1_pressure;
-        dp2.ws = list_1_speed;
-        dp2.wd = list_1_deg;
-        dp2.ep = list_1_dt;
-        dp2.ti = "+2D";//list_1_dt;
-
-        dp3.de = list_2_weather_0_description;
-        dp3.ic = list_2_weather_0_icon;
-        dp3.te = list_2_temp_day;
-        dp3.mi = list_2_temp_min;
-        dp3.mx = list_2_temp_max;
-        dp3.hu = list_2_humidity;
-        dp3.pr = list_2_pressure;
-        dp3.ws = list_2_speed;
-        dp3.wd = list_2_deg;
-        dp3.ep = list_2_dt;
-        dp3.ti = "+3D";//list_2_dt;
-        Serial.print("next1 ");
-        Serial.println(dp1.ep);
-        Serial.print("next2 ");
-        Serial.println(dp2.ep);
-        Serial.print("next3 ");
-        Serial.println(dp3.ep);
-*/
       }
     }
     client.stop();

@@ -40,11 +40,13 @@ void printWeather(weather_data data){
   display.setCursor(96,0);
   display.print(data.ti);
   display.setCursor(0,8);
-  display.printf("%4dhPa %3d%%RH", data.pr, data.hu);
+  display.printf("%3d/%3ddC %3d%%RH", data.mi, data.mx, data.hu);
+//  display.printf("%4dhPa %3d%%RH", data.pr, data.hu);
   display.setCursor(0,16);
-  display.printf("%4.1fdC %5.1fkm/h", data.te, data.ws);
-  display.setCursor(0,24);
-  display.printf("%4d/%4ddC", data.mi, data.mx);
+  display.printf("%3d%%RH %5.1fkm/h", data.pr, data.ws);
+//  display.printf("%4.1fdC %5.1fkm/h", data.te, data.ws);
+//  display.setCursor(0,24);
+//  display.printf("%3d/%3ddC", data.mi, data.mx);
   display.display();      
  
 }
@@ -57,11 +59,13 @@ void printWeatherC(weather_data data){
   display.setCursor(0,0);
   display.print(data.de);
   display.setCursor(0,8);
-  display.printf("%4dhPa %3d%%RH", data.pr, data.hu);
+  display.printf("%4.1fdC %3d%%RH", data.te, data.hu);
+//  display.printf("%4dhPa %3d%%RH", data.pr, data.hu);
   display.setCursor(0,16);
-  display.printf("%4.1fdC %5.1fkm/h", data.te, data.ws);
+  display.printf("%3d%%RH %5.1fkm/h", data.pr, data.ws);
+//  display.printf("%4.1fdC %5.1fkm/h", data.te, data.ws);
 //  display.setCursor(0,24);
-//  display.printf("%4d/%4ddC", data.mi, data.mx);
+//  display.printf("%3d/%3ddC", data.mi, data.mx);
   display.display();      
  
 }

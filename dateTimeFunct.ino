@@ -19,12 +19,12 @@ void checkDST()
   WiFiClient client;
 //  bool isDayLightSavingsTime = false;
   
-  String timeHost = "worldclockapi.com";
-  if (client.connect(timeHost, 80))
+  String host = "worldclockapi.com";
+  if (client.connect(host, 80))
   {
     client.print(String("GET /api/json/cet/now") +
                 "\r\n"+
-                 "Host: " + timeHost + "\r\n" +
+                 "Host: " + host + "\r\n" +
                  "Connection: close\r\n" +
                  "\r\n"
     );
@@ -35,23 +35,23 @@ void checkDST()
       {
         String line = client.readStringUntil('\n');
 // Json
-        const size_t capacity = JSON_OBJECT_SIZE(9) + 230;
+        const size_t capacity = 2*JSON_OBJECT_SIZE(9) + 230;
         DynamicJsonDocument doc(capacity);
         deserializeJson(doc, line);
         
 //        const char* _id = doc["$id"]; // "1"
 //        const char* currentDateTime = doc["currentDateTime"]; // "2019-03-04T10:41+01:00"
-        const char* utcOffset = doc["utcOffset"]; // "01:00:00"
+        const String utcOffset = doc["utcOffset"]; // "01:00:00"
         bool isDayLightSavingsTime = doc["isDayLightSavingsTime"]; // false
 //        const char* dayOfTheWeek = doc["dayOfTheWeek"]; // "Monday"
 //        const char* timeZoneName = doc["timeZoneName"]; // "Central Europe Standard Time"
 //        long currentFileTime = doc["currentFileTime"]; // 131961696759378690
 //        const char* ordinalDate = doc["ordinalDate"]; // "2019-63"
 
+
 		if (isDayLightSavingsTime) {dst_tz.dst = 3600;}
 		else {dst_tz.dst = 0;}
-    String utco_tmp = String(utcOffset);
-		dst_tz.tz = utco_tmp.substring(0,utco_tmp.indexOf(":")-1).toInt()*3600;
+		dst_tz.tz = 3600;
       }
     }
     client.stop();
