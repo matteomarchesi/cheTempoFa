@@ -14,18 +14,18 @@ cheTempoFa.ino
 - 330R pass resistor
 - pushbuttons
   - reset (hidden)
-  - function (TBD)
+  - function
 - program switch (hidded)
 - USB adapter for program/debuggin
 
 #Software:
 Get date and time from NTP server
-Get timezone and DST from (TBD)
+Get DST from
   - http://worldclockapi.com/api/json/cet/now
 Get weather from openweathermap.org
 - current
-- 3h forecast (TBD)
-- next day(s) forecast (TBD)
+- 3h forecast
+- next day(s) forecast
 - OTA (TBD)
 - SPIFF (TBD) to manage config parameters (TBD)
   - ssid
@@ -34,3 +34,8 @@ Get weather from openweathermap.org
   - location
 
 REQUIRES ArduinoJSON 6
+
+in Adafruit_SSD1306.h set the 128x64 configuration!!!
+#define SSD1306_128_64
+//   #define SSD1306_128_32
+

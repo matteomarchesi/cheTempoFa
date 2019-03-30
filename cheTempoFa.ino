@@ -30,17 +30,6 @@
  *   - password
  *   - apikey
  *   - location
- *   
- *   
- *  char size 6x8
- *  rows start at 0, 8, 16, 24  
- *  +---------------------+
- *  |cielo sereno         |
- *  | 1034hPa 100%RH      |
- *  |  4.1km/h    8.0dC   |
- *  |Sat 27-02-19 16:05:38|
- *  +---------------------+
- *   012345678901234567890
  */
 
 #include <ESP8266WiFi.h>
@@ -49,6 +38,12 @@
 #include <Wire.h>;
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <Fonts/FreeMono9pt7b.h>
+/*
+ * in Adafruit_SSD1306.h set the 128x64 configuration!!!
+ * #define SSD1306_128_64
+ * //   #define SSD1306_128_32
+ */
 
 const char* host      = "api.openweathermap.org";
 
@@ -62,8 +57,9 @@ String weatherString;
 
 // oled setup
 #define OLED_address  0x78
-#define OLED_RESET -1
 
+// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
+#define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SSD1306 display(OLED_RESET);
 
 #include <time.h>                       
@@ -95,7 +91,7 @@ typedef struct {
   float  ws; // wind speed
   int    wd; // wind direction
   int    vi; // visibility 
-  int	 cl; // clouds
+  int	   cl; // clouds
   String ti; // time
   long   ep; // epoch day time
 } weather_data;
@@ -134,7 +130,6 @@ void setup()
 {
 // set Serial connection for debug
   Serial.begin(115200,SERIAL_8N1,SERIAL_TX_ONLY);
-  Serial.println();
 
   pinMode(3,INPUT_PULLUP);
 
@@ -149,20 +144,23 @@ void setup()
   display.setTextColor(WHITE);
   display.display();
 
-  Serial.printf("Connect %s ", ssid);
-
-  display.setCursor(0,0);
+  display.setCursor(10,0);
+  display.print("cheTempoFa");
+  display.setCursor(0,8);
+  display.print("Matteo Marchesi 2019");
+  display.setCursor(0,16);
+  display.print("github.com/matteomarchesi/cheTempoFa");
+  display.setCursor(0,32);
+  display.setCursor(0,40);
   display.printf("%s\n",ssid);
   display.display();
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
-    Serial.print(".");
     display.print(".");
     display.display();
   }
-  Serial.println(" connected");
   display.println("\nconnected");
   display.display();
   checkDST();
@@ -170,17 +168,17 @@ void setup()
 //  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   configTime(dst_tz.tz, dst_tz.dst, ntpServer);
 
-  Serial.println("\nWaiting for time");
   unsigned timeout = 5000;
   unsigned start = millis();
   while (!time(nullptr)) 
   {
-    Serial.print(".");
     delay(1000);
   }
   delay(1000);
+
+  display.clearDisplay();
+  display.display();
   
-  Serial.println("Time...");
   printTime();
 }
 

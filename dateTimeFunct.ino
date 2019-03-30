@@ -3,8 +3,9 @@ void printTime()
   time (&rawtime);
   timeinfo = localtime (&rawtime);
   strftime (buffer,80,"%a %d-%m-%y %H:%M:%S",timeinfo);
-//  Serial.println(buffer);
-  clearLine(3);
+//  clearLine(3);
+  clearPixArea(55,63,0,127);
+  display.setCursor(0,55);
   display.print(buffer);
   display.display();
   sec = timeinfo->tm_sec;

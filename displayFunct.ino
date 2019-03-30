@@ -1,71 +1,50 @@
-void clearLine(int lineN){
-  display.setCursor(0,lineN*8);
-  for (int y=lineN*8; y<lineN*8+8; y++)
+void clearPixArea(int ys, int ye, int xs, int xe){
+  display.setCursor(ys,ye);
+  for (int y=ys; y<ye; y++)
   {
-    for (int x=0; x<127; x++)
+    for (int x=xs; x<xe; x++)
     {
       display.drawPixel(x, y, BLACK); 
     }
   } 
 }
-
-void clearChar(int lineN, int colN){
-  display.setCursor(colN*6,lineN*8);
-  for (int y=lineN*8; y<lineN*8+8; y++)
-  {
-    for (int x=colN*6; x<colN*6+6; x++)
-    {
-      display.drawPixel(x, y, BLACK); 
-    }
-  } 
-}
-
-/*
- *  char size 6x8
- *  rows start at 0, 8, 16, 24  
- *  +---------------------+
- *  |cielo sereno         |
- *  |1034hPa 100%RH       |
- *  |  8.0dC    4.1km/h   |
- *  |-10.1/-10.1dC        |
- *  |Sat 27-02-29 16:05:38|
- *  +---------------------+
- *   012345678901234567890
- */
  
-void printWeather(weather_data data){
-  display.clearDisplay();
-  display.setCursor(0,0);
-  display.print(data.de);
-  display.setCursor(96,0);
-  display.print(data.ti);
-  display.setCursor(0,8);
-  display.printf("%3d/%3ddC %3d%%RH", data.mi, data.mx, data.hu);
-//  display.printf("%4dhPa %3d%%RH", data.pr, data.hu);
-  display.setCursor(0,16);
-  display.printf("%3d%%RH %5.1fkm/h", data.pr, data.ws);
-//  display.printf("%4.1fdC %5.1fkm/h", data.te, data.ws);
-//  display.setCursor(0,24);
-//  display.printf("%3d/%3ddC", data.mi, data.mx);
+void printWeatherC(weather_data data){
+//  display.clearDisplay();
+  clearPixArea(0,54,0,127); 
+  display.setFont(&FreeMono9pt7b);
+  display.setCursor(0,11);
+  display.print(data.de.substring(0,11)); // cielo seren
+  display.setCursor(0,24);
+  display.printf("%4.1fC", data.te);     // -12.0dC   
+  display.setFont(); 
+  display.setCursor(0,27); 
+  display.printf("%4dhPa %3d%%RH", data.pr, data.hu);
+  display.setCursor(0,36); 
+  display.printf("vento: %3.0fm/s %3ddeg", data.ws, data.wd);
+  display.setCursor(0,45); 
+  display.printf("vi: %5dm  nu: %3d%%", data.vi, data.cl);
   display.display();      
  
 }
 
-void printWeatherC(weather_data data){
+void printWeather(weather_data data){
 //  display.clearDisplay();
-  clearLine(0);
-  clearLine(1);
-  clearLine(2);
-  display.setCursor(0,0);
-  display.print(data.de);
-  display.setCursor(0,8);
-  display.printf("%4.1fdC %3d%%RH", data.te, data.hu);
-//  display.printf("%4dhPa %3d%%RH", data.pr, data.hu);
-  display.setCursor(0,16);
-  display.printf("%3d%%RH %5.1fkm/h", data.pr, data.ws);
-//  display.printf("%4.1fdC %5.1fkm/h", data.te, data.ws);
-//  display.setCursor(0,24);
-//  display.printf("%3d/%3ddC", data.mi, data.mx);
+  clearPixArea(0,63,0,127); 
+  display.setFont(&FreeMono9pt7b);
+  display.setCursor(0,11);
+  display.print(data.de.substring(0,11)); // cielo seren
+  display.setCursor(0,24);
+  display.printf("%4d/%4dC ", data.mi, data.mx );     
+  display.setFont(); 
+  display.setCursor(0,27); 
+  display.printf("%4dhPa %3d%%RH", data.pr, data.hu);
+  display.setCursor(0,36); 
+  display.printf("vento: %3.0fm/s %3ddeg", data.ws, data.wd);
+  display.setCursor(0,45); 
+  display.printf("vi: %5dm  nu: %3d%%", data.vi, data.cl);
+  display.setCursor(0,55);
+  display.print(data.ti);
   display.display();      
  
 }
