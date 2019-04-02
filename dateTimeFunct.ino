@@ -3,7 +3,6 @@ void printTime()
   time (&rawtime);
   timeinfo = localtime (&rawtime);
   strftime (buffer,80,"%a %d-%m-%y %H:%M:%S",timeinfo);
-//  clearLine(3);
   clearPixArea(55,63,0,127);
   display.setCursor(0,55);
   display.print(buffer);
@@ -12,83 +11,22 @@ void printTime()
   ora = timeinfo->tm_hour;
 }
 
-
-
-
-void checkDST()
-{
-  WiFiClient client;
-//  bool isDayLightSavingsTime = false;
-  
-  String host = "worldclockapi.com";
-  if (client.connect(host, 80))
-  {
-    client.print(String("GET /api/json/cet/now") +
-                "\r\n"+
-                 "Host: " + host + "\r\n" +
-                 "Connection: close\r\n" +
-                 "\r\n"
-    );
-
-    while (client.connected() || client.available())
-    {
-      if (client.available())
-      {
-        String line = client.readStringUntil('\n');
-// Json
-        const size_t capacity = 2*JSON_OBJECT_SIZE(9) + 230;
-        DynamicJsonDocument doc(capacity);
-        deserializeJson(doc, line);
-        
-//        const char* _id = doc["$id"]; // "1"
-//        const char* currentDateTime = doc["currentDateTime"]; // "2019-03-04T10:41+01:00"
-        const String utcOffset = doc["utcOffset"]; // "01:00:00"
-        bool isDayLightSavingsTime = doc["isDayLightSavingsTime"]; // false
-//        const char* dayOfTheWeek = doc["dayOfTheWeek"]; // "Monday"
-//        const char* timeZoneName = doc["timeZoneName"]; // "Central Europe Standard Time"
-//        long currentFileTime = doc["currentFileTime"]; // 131961696759378690
-//        const char* ordinalDate = doc["ordinalDate"]; // "2019-63"
-
-
-		if (isDayLightSavingsTime) {dst_tz.dst = 3600;}
-		else {dst_tz.dst = 0;}
-		dst_tz.tz = 3600;
-      }
-    }
-    client.stop();
-
-  }
-	
-  else
-  {
-    client.stop();
-  }
-  
+bool dstCET(bool isDST){
+  int mon = timeinfo->tm_mon;
+  int mday = timeinfo->tm_mday;
+  int wday = timeinfo->tm_wday;
+  int hou = timeinfo->tm_hour;
+  if ((mon<2) or (mon>9)) { isDST = false;}
+  if ((mon>2) or (mon<9)) { isDST = true;}
+  if ((mon==2) and (mday<24)) { isDST = false;}
+  if ((mon==2) and (isDST==false) and (wday >= 1) and (hou >= 2)) { isDST = true;}
+  if ((mon==9) and (mday<24)) { isDST = true;}
+  if ((mon==9) and (isDST==true) and (wday >= 1) and (hou >= 3)) { isDST = false;}
+  return isDST;
 }
-	
-/*	
-    while (clientTime.connected() || clientTime.available())
-    {
-      if (clientTime.available())
-      {
-        String line = clientTime.readStringUntil('\n');
-// Json
-        
-        DynamicJsonBuffer jsonBuf;
-        JsonObject& root = jsonBuf.parseObject(line);
-        
-        if (!root.success())
-        {
-          return isDayLightSavingsTime;
-        }
 
-        isDayLightSavingsTime = root["isDayLightSavingsTime"]; // false
-      }
-    }
-  }
-  return isDayLightSavingsTime;
- }
-  */
+
+
 /*
    int tm_sec;         /* seconds,  range 0 to 59          
    int tm_min;         /* minutes, range 0 to 59           

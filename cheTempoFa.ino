@@ -65,20 +65,14 @@ Adafruit_SSD1306 display(OLED_RESET);
 #include <time.h>                       
 
 const char* ntpServer = "pool.ntp.org";
-const long  gmtOffset_sec = 3600;
-const int   daylightOffset_sec = 0;
+long  gmtOffset_sec = 3600;
+long  daylightOffset_sec = 0;
+bool isDST = false;
 
 char buffer[80];
 
 time_t rawtime;
 struct tm * timeinfo;
-
-typedef struct{
-	long dst = 0;
-	long tz = 3600;
-} dsttz;
-
-dsttz dst_tz;
 
 typedef struct {
   String de; // description
@@ -110,10 +104,15 @@ int sec_pre = -1;
 
 void getWeather();
 void getWeatherHourly();
-void clearLine(int lineN);
-void clearChar(int lineN, int colN);
 void printTime();
-void checkDST();
+void clearPixArea(int ys, int ye, int xs, int xe);
+bool dstCET(int isDST);
+void printWeatherC(weather_data data);
+void printWeather(weather_data data);
+void getWeather();
+void getWeatherHourly();
+void getWeatherDaily();
+
 
 unsigned long previousMillis = 0;
 unsigned long interval = 5000;
@@ -147,8 +146,6 @@ void setup()
   display.setCursor(10,0);
   display.print("cheTempoFa");
   display.setCursor(0,8);
-  display.print("Matteo Marchesi 2019");
-  display.setCursor(0,16);
   display.print("github.com/matteomarchesi/cheTempoFa");
   display.setCursor(0,32);
   display.setCursor(0,40);
@@ -163,10 +160,10 @@ void setup()
   }
   display.println("\nconnected");
   display.display();
-  checkDST();
 
-//  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
-  configTime(dst_tz.tz, dst_tz.dst, ntpServer);
+  if (isDST) {daylightOffset_sec=3600;}
+  else {daylightOffset_sec = 0;}
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
   unsigned timeout = 5000;
   unsigned start = millis();
@@ -257,10 +254,10 @@ void loop()
     sec_pre = sec;
   }
   if (ora!=ora_pre){
-  	if (ora==4){
-      checkDST();
-  		configTime(dst_tz.tz, dst_tz.dst, ntpServer);
-  	}
+    isDST = dstCET(isDST);
+    if (isDST) {daylightOffset_sec=3600;}
+    else {daylightOffset_sec = 0;}
+    configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
     getWeather();
     getWeatherHourly();
     getWeatherDaily();
