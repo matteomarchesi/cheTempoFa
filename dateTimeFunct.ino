@@ -14,14 +14,40 @@ void printTime()
 bool dstCET(bool isDST){
   int mon = timeinfo->tm_mon;
   int mday = timeinfo->tm_mday;
-  int wday = timeinfo->tm_wday;
+//  int wday = timeinfo->tm_wday;
+  int wday = timeinfo->tm_wday + 1;
   int hou = timeinfo->tm_hour;
   if ((mon<2) or (mon>9)) { isDST = false;}
   if ((mon>2) or (mon<9)) { isDST = true;}
+/*
   if ((mon==2) and (mday<24)) { isDST = false;}
   if ((mon==2) and (isDST==false) and (wday >= 1) and (hou >= 2)) { isDST = true;}
   if ((mon==9) and (mday<24)) { isDST = true;}
   if ((mon==9) and (isDST==true) and (wday >= 1) and (hou >= 3)) { isDST = false;}
+*/
+  if ((mon==2) and (mday<25)) { isDST = false;}
+  if (mon==2){
+    if ((mday>=25) and (wday==0) and (hou>=2) and (isDST==false)) {isDST=true;}
+    if ((mday==26) and (wday==1)) {isDST=true;}
+    if ((mday==27) and (wday>=1) and (wday<=2)) {isDST=true;}
+    if ((mday==28) and (wday>=1) and (wday<=3)) {isDST=true;}
+    if ((mday==29) and (wday>=1) and (wday<=4)) {isDST=true;}
+    if ((mday==30) and (wday>=1) and (wday<=5)) {isDST=true;}
+    if ((mday==31) and (wday>=1)) {isDST=true;}
+  }
+
+  if ((mon==9) and (mday<25)) { isDST = true;}
+  if (mon==9){
+    if ((mday>=25) and (wday==0) and (hou>=2) and (isDST==true)) {isDST=false;}
+    if ((mday==26) and (wday==1)) {isDST=false;}
+    if ((mday==27) and (wday>=1) and (wday<=2)) {isDST=false;}
+    if ((mday==28) and (wday>=1) and (wday<=3)) {isDST=false;}
+    if ((mday==29) and (wday>=1) and (wday<=4)) {isDST=false;}
+    if ((mday==30) and (wday>=1) and (wday<=5)) {isDST=false;}
+    if ((mday==31) and (wday>=1)) {isDST=false;}
+  }
+
+
   return isDST;
 }
 
