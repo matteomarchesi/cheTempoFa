@@ -39,6 +39,8 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Fonts/FreeMono9pt7b.h>
+#include <WeatherIcon.h>
+
 /*
  * in Adafruit_SSD1306.h set the 128x64 configuration!!!
  * #define SSD1306_128_64
@@ -125,8 +127,6 @@ int lastButtonState = LOW;   // the previous reading from the input pin
 unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
 unsigned long debounceDelay = 50;    // the debounce time; increase if the output flickers
 
-#include <ArduinoOTA.h>
-
 void setup()
 {
 // set Serial connection for debug
@@ -178,33 +178,9 @@ void setup()
   display.clearDisplay();
   display.display();
   
-
-  ArduinoOTA.setHostname("cheTempoFa");
-  ArduinoOTA.setPassword("cheTempoFa");
   display.setCursor(0,0);
   display.print("cheTempoFa");
-  display.setCursor(0,8);
-  display.print("OTA setup");
   display.setCursor(0,16);
-  ArduinoOTA.onStart([]() {
-    display.print("Start");
-  });
-  ArduinoOTA.onEnd([]() {
-    display.print("\nEnd");
-  });
-  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-    display.printf("Progress: %u%%\r", (progress / (total / 100)));
-  });
-  ArduinoOTA.onError([](ota_error_t error) {
-    display.printf("Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR) display.println("Auth Failed");
-    else if (error == OTA_BEGIN_ERROR) display.println("Begin Failed");
-    else if (error == OTA_CONNECT_ERROR) display.println("Connect Failed");
-    else if (error == OTA_RECEIVE_ERROR) display.println("Receive Failed");
-    else if (error == OTA_END_ERROR) display.println("End Failed");
-  });
-  ArduinoOTA.begin();
-  display.println("OTA ready");
   delay(2000);
   display.clearDisplay();
   display.display();
